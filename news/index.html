@@ -1,0 +1,159 @@
+<html>
+    <head>Happening around</head>
+    <style>
+/* Split the screen in half */
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  color: grey;
+  font: arial;
+}
+
+/* Control the left side */
+.left {
+  left: 0;
+  background-color: white;
+}
+
+a:link {
+  color: grey;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: pink;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+}
+/* Control the right side */
+.right {
+  right: 0;
+  background-color:white;
+}
+
+/* If you want the content centered horizontally and vertically */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Style the image inside the centered container, if needed */
+.centered img {
+  width: 150px;
+  border-radius: 50%;
+}
+
+footer {
+  text-align: center;
+  padding: 3px;
+  background-color: white;
+  color: grey;
+}
+ul.nav {
+  padding-left: 0px;
+  background-color: white;
+  text-align: center;
+}
+ul.nav1 {
+  margin-bottom:1%;
+  margin-top: 30%;
+  padding-left: 0px;
+  background-color: white;
+  text-align: center;
+}
+ul.nav1 > li {
+  display: inline-block;
+  padding: 7px 14px;
+}
+ul.nav1 > li:hover {
+  background-color: white;
+}
+ul.nav1 > li > a {
+  color: grey;
+  text-decoration: none;
+}
+ul.nav > li {
+  display: inline-block;
+  padding: 10px 20px;
+}
+ul.nav > li:hover {
+  background-color: white;
+}
+ul.nav > li > a {
+  color: grey;
+  text-decoration: none;
+}
+
+
+
+
+    </style>
+    <body>
+        <div class="split left">
+            <div class="cent">
+                <div id="canvas">
+                    <div id="heading">   
+                        <h3> Latest News</h3>
+                        <a>Last Update:</a>
+                        <p id="date"></p>
+                    </div>
+                    <div id="feed-textarea">
+                        <ul></ul>
+                    </div>
+                            <div id="feed-textarea2">
+                        <ul></ul>
+                    </div>
+                </div>
+                <script src="dat.js"></script>
+                <script src="app.js"></script>
+            </div>
+            <div class="bottom">
+                <iframe src="https://t.me/s/infomalware" title="W3Schools Free Online Web Tutorials"></iframe>
+            <div>    
+          </div>
+          
+          <div class="split right">
+            <div class="centered">
+
+              <img src="globe.gif" alt="Avatar man">
+              <h2>Around The World</h2>
+              <p>Cyber Incidents & Malware attacks</p>
+              <ul class="nav1">
+                <li><a href="https://twitter.com/amritvin">Twitter</a></li>
+                <li><a href="https://www.linkedin.com/in/amritanand-c-19a94823/">Linkedin</a></li>
+                <li><a href="https://www.github.com/amritvin">Gitub</a></li>
+                <p> Made with ❤️ by <a href="https://amritvin.github.io">c.amritanand</a> </p>
+              </ul>
+              </div>
+              <footer>
+                <h3><p>MalFeeds <br></p></h3>
+                <ul class="nav">
+                    <li><a href="https://amritvin.github.io">Home</a></li>
+                    <li><a href="https://amritvin.github.io/blogs/about/">About</a></li>
+                    <li><a href="https://amritvin.github.io/blogs/">Blogs</a></li>
+                  </ul>
+              </footer>
+          </div>
+    </body>
+</html>
