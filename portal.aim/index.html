@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .feeds-column {
+            flex: 1;
+            padding-right: 20px;
+        }
+        .summary-column {
+            flex: 1;
+            padding-left: 20px;
+        }
+        .rss-entry {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .rss-entry h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        .rss-entry h3 a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .rss-entry h3 a:hover {
+            text-decoration: underline;
+        }
+        .rss-entry p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .rss-entry .source {
+            font-size: 12px;
+            color: #999;
+        }
+        .add-feed-form {
+            margin-bottom: 20px;
+        }
+        .add-feed-form input[type="text"] {
+            width: calc(100% - 100px);
+            margin-right: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        .add-feed-form button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .add-feed-form button:hover {
+            background-color: #0056b3;
+        }
+        .summary-table {
+            margin-bottom: 20px;
+        }
+        .summary-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .summary-table th, .summary-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .summary-table th {
+            background-color: #f2f2f2;
+        }
+        .chart-container {
+            margin-top: 20px;
+            height: 300px;
+        }
+        .clock-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin-left: auto;
+        }
+        .clock {
+            width: 200px;
+            height: 200px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .hour, .minute, .second {
+            position: absolute;
+            width: 50%;
+            height: 2px;
+            background: #000;
+            top: 50%;
+            transform-origin: 100%;
+            transition: all 0.5s ease;
+        }
+        .hour {
+            background-color: #000;
+            transform: rotate(90deg);
+        }
+        .minute {
+            background-color: #333;
+            transform: rotate(90deg);
+        }
+        .second {
+            background-color: red;
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="feeds-column">
+            <h1>AmritVin Incident Monitor</h1>
+            <div class="add-feed-form">
+                <input type="text" id="newFeedInput" placeholder="Enter RSS feed URL">
+                <button onclick="addNewFeed()">Add Feed</button>
+            </div>
+            <div id="rssFeeds"></div>
+        </div>
+        <div class="summary-column">
+            <div class="summary-table" id="summaryTable"></div>
+            <div class="chart-container">
+                <canvas id="feedChart"></canvas>
+            </div>
+        </div>
+		
+        <div class="clock-container" id="clockContainer"></div>
+		<h4 id="realTimeClock"></h4>
+    </div>
+
+    <script>
+	
+
+		function updateClock() {
+		  const now = new Date();
+		  const hour = now.getHours();
+		  const minute = now.getMinutes();
+		  const second = now.getSeconds();
+		  const timeString = `${hour}:${minute}:${second}`;
+          document.getElementById('realTimeClock').textContent = `Current Time: ${timeString}`;
+		  const hourDeg = ((hour % 12) * 30 + (minute / 2) + (hour / 2) * 30);
+		  const minuteDeg = (minute * 6 + (second / 10));
+		  const secondDeg = (second * 6);
+		
+		  const hourHand = createClockHand(hourDeg, 'hour');
+		  const minuteHand = createClockHand(minuteDeg, 'minute');
+		  const secondHand = createClockHand(secondDeg, 'second');
+		
+		  const clockContainer = document.getElementById('clockContainer');
+		  clockContainer.innerHTML = '';
+		  clockContainer.appendChild(hourHand);
+		  clockContainer.appendChild(minuteHand);
+		  clockContainer.appendChild(secondHand);
+		}
+		
+		function createClockHand(degrees, className) {
+		  const hand = document.createElement('div');
+		  hand.classList.add(className);
+		  hand.style.transform = `rotate(${degrees}deg)`;
+		  return hand;
+		}
+		
+		setInterval(updateClock, 1000);
+		updateClock();
+
+        // Initial RSS Feed URLs
+        let rssFeeds = [
+            "https://krebsonsecurity.com/feed/",
+            "https://feeds.feedburner.com/TheHackersNews",
+            "https://www.mcafee.com/blogs/feed/",
+            "https://www.bleepingcomputer.com/feed/",
+            "https://blog.malwarebytes.com/feed/",
+            "https://cyble.com/blog/feed/",
+            "https://www.sentinelone.com/feed/",
+            "https://www.bitdefender.com/blog/api/rss/labs/",
+            "https://any.run/cybersecurity-blog/category/malware-analysis/feed/",
+            "https://russianpanda.com/feed.xml",
+            "https://www.securityweek.com/feed/",
+            "https://securityscorecard.com/blog/feed/",
+            "https://securityaffairs.com/feed",
+            "https://www.webroot.com/blog/feed/"
+            // Add more feed URLs as needed
+        ];
+
+        // Function to extract domain from URL
+        function extractDomain(url) {
+            const domain = url.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
+            return domain;
+        }
+
+        // Function to fetch and display RSS feeds
+        async function fetchRSSFeeds() {
+            const rssEntries = [];
+            const feedSummary = {};
+            for (const feedUrl of rssFeeds) {
+                try {
+                    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
+                    const data = await response.json();
+                    const sourceUrl = data.feed.url;
+                    const sourceDomain = extractDomain(sourceUrl);
+                    feedSummary[sourceDomain] = feedSummary[sourceDomain] || { count: 0, latestUpdate: null };
+                    feedSummary[sourceDomain].count += data.items.length;
+                    const latestItemDate = new Date(data.items[0].pubDate);
+                    if (!feedSummary[sourceDomain].latestUpdate || latestItemDate > feedSummary[sourceDomain].latestUpdate) {
+                        feedSummary[sourceDomain].latestUpdate = latestItemDate;
+                    }
+                    for (const item of data.items) {
+                        rssEntries.push({
+                            title: item.title,
+							date: new Date(item.pubDate).toISOString(),
+                            //date: new Date(item.pubDate).toLocaleString(),
+                            source: sourceDomain,
+                            link: item.link
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Error fetching RSS feed from ${feedUrl}:`, error);
+                }
+            }
+
+            //rssEntries.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort entries by date in descending order
+			rssEntries.sort((a, b) => b.date.localeCompare(a.date)); // Sort entries by date in descending order
+			
+            const rssFeedsElement = document.getElementById('rssFeeds');
+            rssFeedsElement.innerHTML = ''; // Clear existing feeds
+            for (const entry of rssEntries) {
+                const entryDiv = document.createElement('div');
+                entryDiv.classList.add('rss-entry');
+
+                const title = document.createElement('h3');
+                const titleLink = document.createElement('a');
+                titleLink.href = entry.link;
+                titleLink.textContent = entry.title;
+                title.appendChild(titleLink);
+
+                const date = document.createElement('p');
+                date.textContent = `Date: ${entry.date}`;
+
+                const source = document.createElement('p');
+                source.classList.add('source');
+                source.textContent = `Source: ${entry.source}`;
+
+                entryDiv.appendChild(title);
+                entryDiv.appendChild(date);
+                entryDiv.appendChild(source);
+                rssFeedsElement.appendChild(entryDiv);
+            }
+
+            // Display summary as table
+            const summaryTableElement = document.getElementById('summaryTable');
+            summaryTableElement.innerHTML = ''; // Clear existing summary table
+            const summaryTable = document.createElement('table');
+            summaryTable.innerHTML = `
+                <tr>
+                    <th>Source</th>
+                    <th>Feed Count</th>
+                    <th>Latest Update</th>
+                </tr>
+            `;
+            const sortedSummary = Object.entries(feedSummary).sort((a, b) => new Date(b[1].latestUpdate) - new Date(a[1].latestUpdate));
+            for (const [sourceDomain, summary] of sortedSummary) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sourceDomain}</td>
+                    <td>${summary.count}</td>
+                    <td>${summary.latestUpdate ? summary.latestUpdate.toLocaleString() : 'N/A'}</td>
+                `;
+                summaryTable.appendChild(row);
+            }
+            summaryTableElement.appendChild(summaryTable);
+
+            // Display summary as line chart
+            const labels = Object.keys(feedSummary);
+            const data = Object.values(feedSummary).map(summary => summary.count);
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Feed Count',
+                    fill: false,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                    pointRadius: 4,
+                    data: data,
+                }]
+            };
+            const ctx = document.getElementById('feedChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to add new RSS feed
+        function addNewFeed() {
+            const newFeedInput = document.getElementById('newFeedInput');
+            const newFeedUrl = newFeedInput.value.trim();
+            if (newFeedUrl) {
+                rssFeeds.push(newFeedUrl);
+                fetchRSSFeeds();
+                newFeedInput.value = ''; // Clear input field
+            } else {
+                alert('Please enter a valid RSS feed URL.');
+            }
+        }
+
+        // Call the function to fetch and display initial RSS feeds
+        fetchRSSFeeds();
+    </script>
+</body>
+</html>
