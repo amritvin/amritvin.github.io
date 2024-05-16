@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +142,9 @@
         <div class="feeds-column">
             <h1>AmritVin Incident Monitor</h1>
             <div class="add-feed-form">
-                <input type="text" id="newFeedInput" placeholder="Enter RSS feed URL">
+				<form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLScMzn5hRni4Ej1irPkiPYSWs_CgvMSp-7W16lMqUz9HhXfxlA/formResponse" method ="POST" target="my_iframe">
+				
+                <input name="entry.2098428465" class="textbox" type="text"  placeholder="Enter RSS feed URL">
                 <button onclick="addNewFeed()">Add Feed</button>
             </div>
             <div id="rssFeeds"></div>
@@ -155,6 +158,8 @@
 		
         <div class="clock-container" id="clockContainer"></div>
 		<h4 id="realTimeClock"></h4>
+	<iframe name="my_iframe" src="" id="my_iframe" width="0" height="0">
+    </iframe>
     </div>
 
     <script>
@@ -329,11 +334,12 @@
 
         // Function to add new RSS feed
         function addNewFeed() {
-            const newFeedInput = document.getElementById('newFeedInput');
-            const newFeedUrl = newFeedInput.value.trim();
+            const newFeedInput = document.getElementsByName('entry.2098428465')[0];
+            const newFeedUrl = newFeedInput.value;
             if (newFeedUrl) {
                 rssFeeds.push(newFeedUrl);
                 fetchRSSFeeds();
+				alert(newFeedUrl+' Feed added successfully!')
                 newFeedInput.value = ''; // Clear input field
             } else {
                 alert('Please enter a valid RSS feed URL.');
