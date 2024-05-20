@@ -144,8 +144,7 @@
             <div class="add-feed-form">
 	<form action="https://docs.google.com/forms/d/e/1FAIpQLSduMAyronXE9ziZ6qtVPoPp6GYKUTw48miLacTzEyBvcehU1w/formResponse" method ="POST" target="my_iframe">
         <input type="text" class="textbox" name="entry.1972094807" placeholder="Enter RSS feed UR...!">
-
-                <button onclick="addNewFeed()">Add Feed</button></form>
+        <button onclick="addNewFeed()">Add Feed</button></form>
             </div>
             <div id="rssFeeds"></div>
         </div>
@@ -334,7 +333,7 @@
 
         // Function to add new RSS feed
         function addNewFeed() {
-            const newFeedInput = document.getElementsByName('entry.2098428465')[0];
+            const newFeedInput = document.getElementsByName('entry.1972094807')[0];
             const newFeedUrl = newFeedInput.value;
             if (newFeedUrl) {
                 rssFeeds.push(newFeedUrl);
