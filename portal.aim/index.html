@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -195,9 +196,7 @@
 		
 		setInterval(updateClock, 1000);
 		updateClock();
-
-        // Initial RSS Feed URLs
-        let rssFeeds = [
+        let rssFeeds =  JSON.parse(localStorage.getItem('rssFeeds'))||[
             "https://krebsonsecurity.com/feed/",
             "https://feeds.feedburner.com/TheHackersNews",
             "https://www.mcafee.com/blogs/feed/",
@@ -214,6 +213,7 @@
             "https://www.webroot.com/blog/feed/"
             // Add more feed URLs as needed
         ];
+        
 
         // Function to extract domain from URL
         function extractDomain(url) {
@@ -229,15 +229,21 @@
                 try {
                     const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
                     const data = await response.json();
-                    const sourceUrl = data.feed.url;
+                    const sourceUrl = feedUrl;
                     const sourceDomain = extractDomain(sourceUrl);
                     feedSummary[sourceDomain] = feedSummary[sourceDomain] || { count: 0, latestUpdate: null };
-                    feedSummary[sourceDomain].count += data.items.length;
-                    const latestItemDate = new Date(data.items[0].pubDate);
+                    feedSummary[sourceDomain].count += data.items.length || data.item.length;
+                    let latestItemDate = null;
+                    if (data.items && data.items.length > 0) {
+                         latestItemDate = new Date(data.items[0].pubDate);
+                        } 
+                        else if (data.item) {
+                             latestItemDate = new Date(data.item[0].pubDate);
+                        }
                     if (!feedSummary[sourceDomain].latestUpdate || latestItemDate > feedSummary[sourceDomain].latestUpdate) {
                         feedSummary[sourceDomain].latestUpdate = latestItemDate;
                     }
-                    for (const item of data.items) {
+                    for (const item of data.items || data.item) {
                         rssEntries.push({
                             title: item.title,
 							date: new Date(item.pubDate).toISOString(),
@@ -339,6 +345,9 @@
                 rssFeeds.push(newFeedUrl);
                 fetchRSSFeeds();
 				alert(newFeedUrl+' Feed added successfully!')
+                if (!rssFeeds.includes(newFeedUrl)) {
+                    localStorage.setItem('rssFeeds', JSON.stringify(rssFeeds));
+                }
                 newFeedInput.value = ''; // Clear input field
             } else {
                 alert('Please enter a valid RSS feed URL.');
